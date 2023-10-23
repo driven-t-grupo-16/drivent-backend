@@ -60,8 +60,7 @@ async function main() {
 			{ name: '212', capacity: 2, hotelId: hotel.id, updatedAt: new Date() },
 			{ name: '311', capacity: 1, hotelId: hotel.id, updatedAt: new Date() },
 			{ name: '111', capacity: 1, hotelId: hotel2.id, updatedAt: new Date() },
-			{ name: '213', capacity: 3, hotelId: hotel2.id, updatedAt: new Date() },
-			{ name: '312', capacity: 2, hotelId: hotel2.id, updatedAt: new Date() },
+			{ name: '212', capacity: 2, hotelId: hotel2.id, updatedAt: new Date() },
 		]
 	})
 	console.log(ticketTypes);
