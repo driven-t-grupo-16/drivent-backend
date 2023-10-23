@@ -5,6 +5,19 @@ import faker from '@faker-js/faker';
 const prisma = new PrismaClient();
 
 async function main() {
+
+	await prisma.address.deleteMany({});
+	await prisma.payment.deleteMany({});
+	await prisma.ticket.deleteMany({});
+	await prisma.ticketType.deleteMany({});
+	await prisma.enrollment.deleteMany({});
+	await prisma.event.deleteMany({});
+	await prisma.session.deleteMany({});
+	await prisma.booking.deleteMany({});
+	await prisma.room.deleteMany({});
+	await prisma.hotel.deleteMany({});
+	await prisma.user.deleteMany({});
+	
 	let event = await prisma.event.findFirst();
 	if (!event) {
 		event = await prisma.event.create({
@@ -19,17 +32,7 @@ async function main() {
 	}
 
 	console.log({ event });
-	await prisma.address.deleteMany({});
-	await prisma.payment.deleteMany({});
-	await prisma.ticket.deleteMany({});
-	await prisma.ticketType.deleteMany({});
-	await prisma.enrollment.deleteMany({});
-	await prisma.event.deleteMany({});
-	await prisma.session.deleteMany({});
-	await prisma.booking.deleteMany({});
-	await prisma.room.deleteMany({});
-	await prisma.hotel.deleteMany({});
-	await prisma.user.deleteMany({});
+	
 
 	const ticketTypes = await prisma.ticketType.createMany({
 		data: [
