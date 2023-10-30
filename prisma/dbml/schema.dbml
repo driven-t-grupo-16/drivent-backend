@@ -8,18 +8,19 @@ Table User {
   password String [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
-  Session Session [not null]
-  Enrollment Enrollment [not null]
+  ActivityRegistration ActivityRegistration [not null]
   Booking Booking
+  Enrollment Enrollment
+  Session Session [not null]
 }
 
 Table Session {
   id Int [pk, increment]
   userId Int [not null]
-  User User [not null]
   token String [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
+  User User [not null]
 }
 
 Table Event {
@@ -40,10 +41,10 @@ Table Enrollment {
   birthday DateTime [not null]
   phone String [not null]
   userId Int [unique, not null]
-  User User [not null]
-  Address Address [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
+  User User [not null]
+  Address Address
   Ticket Ticket
 }
 
@@ -57,9 +58,9 @@ Table Address {
   neighborhood String [not null]
   addressDetail String
   enrollmentId Int [unique, not null]
-  Enrollment Enrollment [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
+  Enrollment Enrollment [not null]
 }
 
 Table TicketType {
@@ -76,33 +77,33 @@ Table TicketType {
 Table Ticket {
   id Int [pk, increment]
   ticketTypeId Int [not null]
-  TicketType TicketType [not null]
   enrollmentId Int [unique, not null]
-  Enrollment Enrollment [not null]
   status TicketStatus [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
+  Enrollment Enrollment [not null]
+  TicketType TicketType [not null]
   Payment Payment
 }
 
 Table Payment {
   id Int [pk, increment]
   ticketId Int [unique, not null]
-  Ticket Ticket [not null]
   value Int [not null]
   cardIssuer String [not null]
   cardLastDigits String [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
+  Ticket Ticket [not null]
 }
 
 Table Hotel {
   id Int [pk, increment]
   name String [not null]
   image String [not null]
-  Rooms Room [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
+  Rooms Room [not null]
 }
 
 Table Room {
@@ -110,20 +111,42 @@ Table Room {
   name String [not null]
   capacity Int [not null]
   hotelId Int [not null]
-  Hotel Hotel [not null]
-  Booking Booking [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
+  Hotel Hotel [not null]
+  Booking Booking [not null]
 }
 
 Table Booking {
   id Int [pk, increment]
-  User User [not null]
   userId Int [unique, not null]
-  Room Room [not null]
   roomId Int [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
+  Room Room [not null]
+  User User [not null]
+}
+
+Table Activity {
+  id Int [pk, increment]
+  startTime String
+  endTime String
+  name String
+  location String
+  capacity Int
+  createdAt DateTime [default: `now()`]
+  updatedAt DateTime [default: `now()`]
+  ActivityRegistration ActivityRegistration [not null]
+}
+
+Table ActivityRegistration {
+  id Int [pk, increment]
+  userId Int
+  activityId Int
+  createdAt DateTime [default: `now()`]
+  updatedAt DateTime [default: `now()`]
+  Activity Activity
+  User User
 }
 
 Enum TicketStatus {
@@ -133,18 +156,22 @@ Enum TicketStatus {
 
 Ref: Session.userId > User.id
 
-Ref: Enrollment.userId > User.id
+Ref: Enrollment.userId - User.id
 
-Ref: Address.enrollmentId > Enrollment.id
-
-Ref: Ticket.ticketTypeId > TicketType.id
+Ref: Address.enrollmentId - Enrollment.id
 
 Ref: Ticket.enrollmentId - Enrollment.id
+
+Ref: Ticket.ticketTypeId > TicketType.id
 
 Ref: Payment.ticketId - Ticket.id
 
 Ref: Room.hotelId > Hotel.id
 
+Ref: Booking.roomId > Room.id
+
 Ref: Booking.userId - User.id
 
-Ref: Booking.roomId > Room.id
+Ref: ActivityRegistration.activityId > Activity.id [delete: No Action]
+
+Ref: ActivityRegistration.userId > User.id [delete: No Action]
