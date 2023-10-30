@@ -7,6 +7,24 @@ async function getActivities() {
     });
 }
 
+async function getUnique(activityId: number) {
+    return prisma.activity.findUnique({
+        where: {
+            id: activityId
+        },
+        include: {
+            ActivityRegistration: {
+                select: {
+                    id: true
+                },
+                where: {
+                    activityId: activityId
+                }
+            }
+        }
+    })
+}
+
 async function getRegistrations() {
     return prisma.activityRegistration.findMany()
 }
@@ -14,7 +32,7 @@ async function getRegistrations() {
 async function getUserActivities(userId: number) {
     return prisma.activityRegistration.findMany({
         where: { userId },
-        select: { activityId: true }
+        include: { Activity: true }
     })
 }
 
@@ -30,5 +48,7 @@ async function create({ userId, activityId }: CreateActivitySignupParams) {
 export const activitiesRepository = {
     getActivities,
     getRegistrations,
+    getUserActivities,
+    getUnique,
     create
 };

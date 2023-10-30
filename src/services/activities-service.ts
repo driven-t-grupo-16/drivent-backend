@@ -1,7 +1,8 @@
 import { Activity, TicketStatus } from '@prisma/client';
-import { invalidDataError, notFoundError } from '@/errors';
+import { invalidDataError, notFoundError, conflictError } from '@/errors';
 import { cannotListHotelsError } from '@/errors/cannot-list-hotels-error';
 import { bookingRepository, enrollmentRepository, hotelRepository, ticketsRepository, activitiesRepository } from '@/repositories';
+import { valid } from 'joi';
 
 async function validateUser(userId: number) {
     const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
@@ -21,6 +22,19 @@ async function validateUser(userId: number) {
     }
 }
 
+async function validateActivity(userId: number, activityId: number) {
+    const registeredList = await activitiesRepository.getUserActivities(userId);
+    const activity = await activitiesRepository.getUnique(activityId);
+
+    if (activity.capacity === activity.ActivityRegistration.length) throw conflictError(`Essa atividade não tem vagas disponíveis!`)
+
+    registeredList.forEach(reg => {
+        const startDuring = activity.startTime > reg.Activity.startTime && activity.startTime < reg.Activity.endTime;
+        const endDuring = activity.endTime > reg.Activity.startTime && activity.endTime < reg.Activity.endTime;
+        const durationContains = activity.startTime <= reg.Activity.startTime && activity.endTime >= reg.Activity.endTime;
+        if (startDuring || endDuring || durationContains) throw conflictError(`Você já está inscrito em uma atividade nesse horário!`);
+    })
+}
 
 async function getActivities(userId: number) {
     await validateUser(userId);
@@ -50,7 +64,7 @@ async function getActivities(userId: number) {
 
 async function signupActivity(userId: number, activityId: number) {
     await validateUser(userId);
-
+    await validateActivity(userId, activityId);
     const activity = await activitiesRepository.create({ userId, activityId });
 
     return activity;
