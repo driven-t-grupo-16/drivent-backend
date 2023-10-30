@@ -1,58 +1,64 @@
-import { Booking, Payment, Ticket } from '@prisma/client';
+import { Booking, Payment, Ticket, ActivityRegistration } from '@prisma/client';
 
 export type ApplicationError = {
-  name: string;
-  message: string;
+    name: string;
+    message: string;
 };
 
 export type RequestError = {
-  status: number;
-  data: object | null;
-  statusText: string;
-  name: string;
-  message: string;
+    status: number;
+    data: object | null;
+    statusText: string;
+    name: string;
+    message: string;
 };
 
 export type ViaCEPAddressError = {
-  error: boolean;
+    error: boolean;
 };
 
 export type AddressEnrollment = {
-  logradouro: string;
-  complemento: string;
-  bairro: string;
-  cidade: string;
-  uf: string;
+    logradouro: string;
+    complemento: string;
+    bairro: string;
+    cidade: string;
+    uf: string;
 };
 
 export type CEP = {
-  cep: string;
+    cep: string;
 };
 
 export type CreateTicketParams = Omit<Ticket, 'id' | 'createdAt' | 'updatedAt'>;
 
 export type InputTicketBody = {
-  ticketTypeId: number;
+    ticketTypeId: number;
 };
 
 export type CardPaymentParams = {
-  issuer: string;
-  number: string;
-  name: string;
-  expirationDate: string;
-  cvv: string;
+    issuer: string;
+    number: string;
+    name: string;
+    expirationDate: string;
+    cvv: string;
 };
 
 export type InputPaymentBody = {
-  ticketId: number;
-  cardData: CardPaymentParams;
+    ticketId: number;
+    cardData: CardPaymentParams;
 };
 
 export type PaymentParams = Omit<Payment, 'id' | 'createdAt' | 'updatedAt'>;
 
 export type InputBookingBody = {
-  roomId: number;
+    roomId: number;
+};
+
+export type SignupActivityBody = {
+    activityId: number;
 };
 
 export type CreateBookingParams = Omit<Booking, 'id' | 'createdAt' | 'updatedAt'>;
 export type UpdateBookingParams = Omit<Booking, 'createdAt' | 'updatedAt'>;
+
+export type CreateActivitySignupParams = Omit<ActivityRegistration, 'id' | 'createdAt' | 'updatedAt'>;
